@@ -1,0 +1,21 @@
+{
+  "name": "herblore-profit",
+  "description": "Herblore cleaning profits via RSBuddy API",
+  "main": "app.js",
+  "authors": [
+    "Garrett Nickel"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
