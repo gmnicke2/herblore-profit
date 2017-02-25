@@ -1,11 +1,26 @@
+doctype html
 html
   head
     title= title
-    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7", crossorigin="anonymous")
-    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css", integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r", crossorigin="anonymous")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS", crossorigin="anonymous")
+    link(rel='stylesheet', href='/static/components/bootstrap/dist/css/bootstrap.min.css')
 
   body
-    h1 Hi
-    h3 Grimy Guam Price: #{grimyGuamPrice}
-    h3 Clean Guam Price: #{guamPrice}
+    script.
+
+    .container.fluid
+      each grimy, idx in grimyHerbs
+        .row.inline-block-row
+          .col-sm-4
+            h3= grimy.name
+            p( id=grimy.name )= grimy.price + 'gp'
+          .col-sm-4
+            h3= cleanHerbs[idx].name
+            p( id=cleanHerbs[idx].name )= cleanHerbs[idx].price + 'gp'
+          .col-sm-4
+            h3= 'Profit'
+            p( id=cleanHerbs[idx].name + "profit")= (grimy.price-cleanHerbs[idx].price) + 'gp'
+
+    script(src="/static/components/jquery/dist/jquery.min.js")
+    script(src="/static/components/bootstrap/dist/js/bootstrap.min.js")
+    script(src="/static/js/index.js")
+          

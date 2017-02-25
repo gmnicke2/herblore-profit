@@ -2,16 +2,12 @@
  * GET /
  * Home page and where herb profits show
  */
-const Client = require('node-rest-client').Client;
-var client = new Client();
-
-const rsbuddyAPIURL = process.env.RSBUDDY_APIURL;
 
 // JSON objects of grimy herbs, price refers to buy price
 var grimyGuam = {'name': 'Grimy guam leaf', 'id': 199, 'price': 0};
 var grimyMarrentill = {'name': 'Grimy marrentill', 'id': 201, 'price': 0};
 var grimyTarromin = {'name': 'Grimy tarromin', 'id': 203, 'price': 0};
-var grimyHarralander = {'name': 'Grimy Harralander', 'id': 205, 'price': 0};
+var grimyHarralander = {'name': 'Grimy harralander', 'id': 205, 'price': 0};
 var grimyRannar = {'name': 'Grimy ranarr weed', 'id': 207, 'price': 0};
 var grimyIrit = {'name': 'Grimy irit leaf', 'id': 209, 'price': 0};
 var grimyAvantoe = {'name': 'Grimy avantoe', 'id': 211, 'price': 0};
@@ -20,7 +16,7 @@ var grimyCadantine = {'name': 'Grimy cadantine', 'id': 215, 'price': 0};
 var grimyDwarf = {'name': 'Grimy dwarf weed', 'id': 217, 'price': 0};
 var grimyTorstol = {'name': 'Grimy torstol', 'id': 219, 'price': 0};
 var grimyToadflax = {'name': 'Grimy toadflax', 'id': 3049, 'price': 0};
-var grimySnapdragon = {'name': 'Grimy toadflax', 'id': 3051, 'price': 0};
+var grimySnapdragon = {'name': 'Grimy snapdragon', 'id': 3051, 'price': 0};
 
 // JSON objects of clean herbs, price refers to sell price
 var guam = {'name': 'Guam leaf', 'id': 249, 'price': 0};
@@ -45,11 +41,15 @@ var cleanHerbs = [guam, marrentill, tarromin, harralander,
                   ranarr, irit, avantoe, kwuarm, cadantine, 
                   dwarf, torstol, toadflax, snapdragon];
 
+const Client = require('node-rest-client').Client;
+var client = new Client();
+
+const rsbuddyAPIURL = process.env.RSBUDDY_APIURL;
+
 // Register method to GET from RSBuddy API
 client.registerMethod('callAPI', rsbuddyAPIURL, 'GET');
 
-var getPrice = (item) => {
-  console.log('Getting price for %s.', item['name']);
+var getPrice = (item, cb, frontendRes) => {
 
   var args = {
       parameters: {a: 'guidePrice', i: item['id']} // GET request params
@@ -57,21 +57,33 @@ var getPrice = (item) => {
 
   client.methods.callAPI(args, (data, res) => {
     item['price'] = item['name'].includes('Grimy') ? data['buying'] : data['selling'];
-    console.log('got '+item['name']+'\'s price.');
+    cb(frontendRes);
   });
 };
 
-exports.index = (req, res) => {
-  grimyHerbs.forEach(getPrice);
-  cleanHerbs.forEach(getPrice);
+var calls = 0;
 
-  setTimeout(() => {
-    res.render(
-      'index', 
-      {
-        title: 'Herb Cleaning Profits (07scape)',
-        grimyGuamPrice: grimyGuam['price'],
-        guamPrice: guam['price']
-      })
-    }, 1000);
+var incrementCalls = (res) => {
+  calls ++;
+  if (calls == grimyHerbs.length * 2) {
+    calls = 0;
+    res.send({grimyHerbs: grimyHerbs, cleanHerbs: cleanHerbs});
+  }
+};
+
+exports.index = (req, res) => {
+  res.render(
+    'index', 
+    {
+      title: 'Herb Cleaning Profits (07scape)',
+      grimyHerbs: grimyHerbs,
+      cleanHerbs: cleanHerbs
+  });
+};
+
+exports.updatePrices = (req, res) => {
+  for(var i = 0; i < grimyHerbs.length; i++) {
+    getPrice(grimyHerbs[i], incrementCalls, res);
+    getPrice(cleanHerbs[i], incrementCalls, res);
+  }
 };

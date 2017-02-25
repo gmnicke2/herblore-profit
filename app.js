@@ -5,7 +5,6 @@ const path = require('path');
 const logger = require('morgan');
 const errorHandler = require('errorhandler');
 const chalk = require('chalk');
-const jquery = require('jquery');
 
 const indexController = require('./controllers/index');
 
@@ -18,11 +17,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(errorHandler());
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'public')));
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.get('/', indexController.index);
+app.post('/api/updatePrices', indexController.updatePrices)
 
 app.listen(app.get('port'), () => {
   console.log('%s App is running at http://localhost:%d', chalk.green('✓'), app.get('port')); 
