@@ -16,7 +16,7 @@ html
           .col-sm-4
             h3= cleanHerbs[idx].name
             p( id=cleanHerbs[idx].name )= cleanHerbs[idx].price + 'gp'
-          .col-sm-4
+          .col-sm-4( id=cleanHerbs[idx].name + "col")
             h3= 'Profit'
             p( id=cleanHerbs[idx].name + "profit")= (grimy.price-cleanHerbs[idx].price) + 'gp'
 
